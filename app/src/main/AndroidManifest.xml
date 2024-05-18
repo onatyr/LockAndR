@@ -2,10 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-permission android:name="android.permission.READ_WALLPAPER_INTERNAL" />
 
     <application
 
@@ -33,7 +38,8 @@
         <activity android:name=".LockActivity" />
 
         <service
-            android:name=".services.ScreenStateService" />
+            android:name=".services.ScreenStateService"
+            android:foregroundServiceType=""/>
 
         <receiver
             android:name=".receivers.DevAdminReceiver"

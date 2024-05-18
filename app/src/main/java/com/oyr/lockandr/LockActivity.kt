@@ -6,26 +6,49 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import com.oyr.lockandr.lockscreen.LockAdmin
+import com.oyr.lockandr.lockscreen.LockScreen
+import com.oyr.lockandr.lockscreen.LockViewModel
 
-class LockActivity : ComponentActivity() {
+@Suppress("DEPRECATION")
+class LockActivity : ComponentActivity(), LockAdmin {
+
+    private val onBackPressedCallback by lazy {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // DO NOTHING
+            }
+        }
+    }
+
+    private val lockViewModel = LockViewModel(this)
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
-        val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        keyguardManager.requestDismissKeyguard(this, null)
-        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
-        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
-        startLockTask()
-        setContent {
-            Button(onClick = { stopLockTask() }) {
-                Text(text = "UNLOCK")
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
         }
+
+        setContent {
+        LockScreen(lockViewModel)
+        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        startLockTask()
+        onBackPressedDispatcher.addCallback(onBackPressedCallback)
+    }
+
+    override fun unlock() {
+        stopLockTask()
+        finish()
     }
 }

@@ -1,10 +1,13 @@
 package com.oyr.lockandr
 
+import android.app.WallpaperManager
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.os.Build
 
 class DevAdminManager(
@@ -55,7 +58,6 @@ class DevAdminManager(
     fun getAppIcon(appInfo: ApplicationInfo) = appInfo.loadIcon(pm)
 
     fun getAppLabel(appInfo: ApplicationInfo) = appInfo.loadLabel(pm).toString()
-
 
     fun setHiddenStatus(packageName: String, status: Boolean) {
         devicePolicyManager.setApplicationHidden(

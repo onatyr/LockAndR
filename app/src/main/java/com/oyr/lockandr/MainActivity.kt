@@ -1,5 +1,6 @@
 package com.oyr.lockandr
 
+import android.app.KeyguardManager
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
@@ -11,19 +12,28 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.oyr.lockandr.DevAdminManager.Companion.RESULT_ENABLE
 import com.oyr.lockandr.packagesscreen.PackagesScreen
 import com.oyr.lockandr.packagesscreen.PackagesViewModel
 import com.oyr.lockandr.receivers.DevAdminReceiver
 import com.oyr.lockandr.services.ScreenStateService
 import com.oyr.lockandr.ui.theme.LockAndRTheme
+import android.Manifest
+
 
 interface AdminActivity {
     fun getPackageManager(): PackageManager
     fun startActivityForResult(intent: Intent, requestCode: Int)
 }
+
 @Suppress("DEPRECATION")
+
 class MainActivity : ComponentActivity(), AdminActivity {
+
+    private val PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1
+
 
     private val adminComponentName: ComponentName by lazy {
         ComponentName(this, DevAdminReceiver::class.java)
@@ -36,7 +46,9 @@ class MainActivity : ComponentActivity(), AdminActivity {
     private lateinit var packagesViewModel: PackagesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        devicePolicyManager.setLockTaskPackages(adminComponentName,
+
+        devicePolicyManager.setLockTaskPackages(
+            adminComponentName,
             arrayOf("com.oyr.lockandr")
         )
         val devAdminManager = DevAdminManager(devicePolicyManager, adminComponentName, this)
@@ -84,6 +96,36 @@ class MainActivity : ComponentActivity(), AdminActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE)
+        } else {
+            startLockTask()
+        }
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    startLockTask()
+                }
+                return
+            }
+
+            else -> {
+                // Ignore all other requests.
+            }
+        }
     }
 }
 
