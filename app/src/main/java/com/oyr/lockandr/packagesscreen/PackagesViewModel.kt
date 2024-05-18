@@ -18,7 +18,7 @@ class PackagesViewModel(val devAdminManager: DevAdminManager) : ViewModel() {
                 label = devAdminManager.getAppLabel(appInfo),
                 icon = devAdminManager.getAppIcon(appInfo)
             )
-        }
+        }.sortedBy { it.label }
 
     private val _appInfoList = MutableStateFlow(appInfoListUnfiltered)
     val appInfoList = _appInfoList.asStateFlow()
