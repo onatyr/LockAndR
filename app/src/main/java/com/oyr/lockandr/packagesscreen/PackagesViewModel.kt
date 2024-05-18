@@ -6,14 +6,15 @@ import com.oyr.lockandr.DevAdminManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.UUID
 
-data class AppInfo(val id: Int, val label: String, val icon: Drawable)
+data class AppInfo(val id: String, val label: String, val icon: Drawable)
 class PackagesViewModel(val devAdminManager: DevAdminManager) : ViewModel() {
 
     private val appInfoListUnfiltered = devAdminManager.getAllPackages().toList()
         .mapIndexed { index, appInfo ->
             AppInfo(
-                id = appInfo.uid + index,
+                id = UUID.randomUUID().toString(),
                 label = devAdminManager.getAppLabel(appInfo),
                 icon = devAdminManager.getAppIcon(appInfo)
             )
@@ -28,10 +29,7 @@ class PackagesViewModel(val devAdminManager: DevAdminManager) : ViewModel() {
         _searchAppQuery.update { query }
         _appInfoList.update {
             appInfoListUnfiltered.filter { appInfo ->
-                appInfo.label.contains(
-                    query,
-                    ignoreCase = true
-                )
+                appInfo.label.contains(query, ignoreCase = true)
             }.toList()
         }
     }

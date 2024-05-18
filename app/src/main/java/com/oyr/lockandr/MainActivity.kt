@@ -34,7 +34,10 @@ import com.oyr.lockandr.packagesscreen.PackagesScreen
 import com.oyr.lockandr.packagesscreen.PackagesViewModel
 import com.oyr.lockandr.ui.theme.LockAndRTheme
 
-
+interface AdminActivity {
+    fun getPackageManager(): PackageManager
+    fun startActivityForResult(intent: Intent, requestCode: Int)
+}
 class MainActivity : ComponentActivity(), AdminActivity {
 
     private val adminComponentName: ComponentName by lazy {

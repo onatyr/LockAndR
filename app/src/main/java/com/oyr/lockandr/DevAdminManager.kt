@@ -5,13 +5,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.os.Build
-
-interface AdminActivity {
-    fun getPackageManager(): PackageManager
-    fun startActivityForResult(intent: Intent, requestCode: Int)
-}
 
 class DevAdminManager(
     private val devicePolicyManager: DevicePolicyManager,
