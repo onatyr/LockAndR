@@ -1,4 +1,4 @@
-package com.oyr.lockandr
+package com.oyr.lockandr.receivers
 
 import android.app.admin.DeviceAdminReceiver
 import android.content.Context

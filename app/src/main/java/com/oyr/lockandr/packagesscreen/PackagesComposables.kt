@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
+import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,7 +19,7 @@ import androidx.compose.ui.unit.dp
 fun PackageCard(label: String, icon: ImageBitmap) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(horizontal = 25.dp, vertical = 8.dp)
+        modifier = Modifier.padding(horizontal = 25.dp, vertical = 10.dp)
     ) {
         Image(
             bitmap = icon,

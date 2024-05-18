@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import com.oyr.lockandr.utils.drawableToBitmap
 
@@ -27,7 +28,7 @@ import com.oyr.lockandr.utils.drawableToBitmap
 fun PackagesScreen(viewModel: PackagesViewModel) {
     val searchAppQuery = viewModel.searchAppQuery.collectAsState()
 
-    Column(modifier = Modifier.background(Color.Black)) {
+    Column(modifier = Modifier.background(Color.Black).padding(bottom = 50.dp)) {
         Spacer(modifier = Modifier.size(30.dp))
         Button(onClick = { viewModel.devAdminManager.requireAdminPermissions() }) {}
         Spacer(modifier = Modifier.size(30.dp))

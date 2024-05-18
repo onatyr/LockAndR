@@ -5,39 +5,24 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.unit.dp
 import com.oyr.lockandr.DevAdminManager.Companion.RESULT_ENABLE
 import com.oyr.lockandr.packagesscreen.PackagesScreen
 import com.oyr.lockandr.packagesscreen.PackagesViewModel
+import com.oyr.lockandr.receivers.DevAdminReceiver
+import com.oyr.lockandr.services.ScreenStateService
 import com.oyr.lockandr.ui.theme.LockAndRTheme
 
 interface AdminActivity {
     fun getPackageManager(): PackageManager
     fun startActivityForResult(intent: Intent, requestCode: Int)
 }
+@Suppress("DEPRECATION")
 class MainActivity : ComponentActivity(), AdminActivity {
 
     private val adminComponentName: ComponentName by lazy {
@@ -48,11 +33,21 @@ class MainActivity : ComponentActivity(), AdminActivity {
         getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
     }
 
-    lateinit var packagesViewModel: PackagesViewModel
+    private lateinit var packagesViewModel: PackagesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        devicePolicyManager.setLockTaskPackages(adminComponentName,
+            arrayOf("com.oyr.lockandr")
+        )
         val devAdminManager = DevAdminManager(devicePolicyManager, adminComponentName, this)
         packagesViewModel = PackagesViewModel(devAdminManager)
+
+        val serviceIntent = Intent(this, ScreenStateService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
 
 
 //        var isAdminActive = false

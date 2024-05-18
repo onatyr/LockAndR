@@ -2,9 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
+
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,7 +22,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.LockAndR">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,8 +30,13 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".LockActivity" />
+
+        <service
+            android:name=".services.ScreenStateService" />
+
         <receiver
-            android:name="com.oyr.lockandr.DevAdminReceiver"
+            android:name=".receivers.DevAdminReceiver"
             android:exported="true"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
@@ -39,6 +47,9 @@
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin" />
+            <meta-data
+                android:name="android.app.locktask_component"
+                android:value=".LockActivity" />
         </receiver>
     </application>
 </manifest>
