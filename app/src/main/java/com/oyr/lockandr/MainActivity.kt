@@ -68,22 +68,13 @@ class MainActivity : ComponentActivity() {
             pm.getInstalledApplications(0)
         }
 
-//        val makeHidden = !devicePolicyManager.isApplicationHidden(
-//            adminComponentName,
-//            "fr.onat68.aileronsappmapandroid"
-//        )
-//        devicePolicyManager.setApplicationHidden(
-//            adminComponentName,
-//            "fr.onat68.aileronsappmapandroid",
-//            makeHidden
-//        )
         enableEdgeToEdge()
         setContent {
             LockAndRTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column {
                         Spacer(modifier = Modifier.size(30.dp))
-                        if (!isAdminActive) Button(onClick = {
+                        Button(onClick = {
                             val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
                             intent.putExtra(
                                 DevicePolicyManager.EXTRA_DEVICE_ADMIN,

@@ -11,8 +11,6 @@ class DevAdminReceiver: DeviceAdminReceiver() {
         Log.d(TAG, "Device Owner Enabled")
     }
 
-
-
     companion object {
         const val TAG = "DevAdminReceiver"
     }
