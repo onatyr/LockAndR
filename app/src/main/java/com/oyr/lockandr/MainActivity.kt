@@ -53,11 +53,10 @@ class MainActivity : ComponentActivity(), AdminActivity {
         super.onCreate(savedInstanceState)
         val devAdminManager = DevAdminManager(devicePolicyManager, adminComponentName, this)
         packagesViewModel = PackagesViewModel(devAdminManager)
-        val pm = packageManager
-        var isAdminActive = false
 
 
-        isAdminActive = devAdminManager.isAdminActive()
+//        var isAdminActive = false
+//        isAdminActive = devAdminManager.isAdminActive()
 
         enableEdgeToEdge()
         setContent {

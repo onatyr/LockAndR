@@ -35,12 +35,21 @@ class DevAdminManager(
         adminActivity.startActivityForResult(intent, RESULT_ENABLE)
     }
 
-    fun getAllPackages(): MutableList<ApplicationInfo> {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            pm.getInstalledApplications(PackageManager.ApplicationInfoFlags.of(0L))
+    fun getAllPackages(): List<ApplicationInfo> {
+        val mainIntent = Intent(Intent.ACTION_MAIN, null)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+
+        val resolvedInfos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            pm.queryIntentActivities(
+                mainIntent,
+                PackageManager.ResolveInfoFlags.of(0L)
+            )
         } else {
-            pm.getInstalledApplications(0)
+            pm.queryIntentActivities(mainIntent, 0)
         }
+
+        val packageList = resolvedInfos.map { it.activityInfo.applicationInfo }
+        return packageList
     }
 
     fun getAppIcon(appInfo: ApplicationInfo) = appInfo.loadIcon(pm)

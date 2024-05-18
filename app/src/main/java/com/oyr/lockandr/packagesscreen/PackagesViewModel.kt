@@ -11,7 +11,7 @@ import java.util.UUID
 data class AppInfo(val id: String, val label: String, val icon: Drawable)
 class PackagesViewModel(val devAdminManager: DevAdminManager) : ViewModel() {
 
-    private val appInfoListUnfiltered = devAdminManager.getAllPackages().toList()
+    private val appInfoListUnfiltered = devAdminManager.getAllPackages()
         .mapIndexed { index, appInfo ->
             AppInfo(
                 id = UUID.randomUUID().toString(),
