@@ -30,7 +30,7 @@ class DevAdminManager(
         intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponentName)
         intent.putExtra(
             DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-            "The app require admin privilege to lock the screen"
+            R.string.admin_device_request_permissions
         )
         adminActivity.startActivityForResult(intent, RESULT_ENABLE)
     }

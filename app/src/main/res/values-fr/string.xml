@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">LockAndR</string>
+
+    <string name="admin_device_request_permissions">L\'application requiert les privilèges administrateur</string>
+    <string name="admin_device_enabled">Administration de l\'appareil activée</string>
+    <string name="admin_device_activation_error">Une erreur est apparue lors de l\'activation de l'Administration d'appareil</string>
+    <string name="app_name">LockAndR</string>
+
+</resources>

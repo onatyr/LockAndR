@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">LockAndR</string>
+
+    <string name="admin_device_request_permissions">The app require admin privilege</string>
+    <string name="admin_device_enabled">"You have enabled the Admin Device features "</string>
+    <string name="admin_device_activation_error">"Problem to enable the Admin Device features "</string>
+
 </resources>

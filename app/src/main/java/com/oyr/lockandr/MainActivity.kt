@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity(), AdminActivity {
 
         enableEdgeToEdge()
         setContent {
-            LockAndRTheme {
+            LockAndRTheme(darkTheme = true) {
                 PackagesScreen(packagesViewModel)
             }
         }
@@ -78,13 +78,13 @@ class MainActivity : ComponentActivity(), AdminActivity {
             RESULT_ENABLE -> if (resultCode == RESULT_OK) {
                 Toast.makeText(
                     this@MainActivity,
-                    "You have enabled the Admin Device features",
+                    R.string.admin_device_enabled,
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
                 Toast.makeText(
                     this@MainActivity,
-                    "Problem to enable the Admin Device features",
+                    R.string.admin_device_activation_error,
                     Toast.LENGTH_SHORT
                 ).show()
             }
