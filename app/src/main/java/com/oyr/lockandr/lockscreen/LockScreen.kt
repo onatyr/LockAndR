@@ -25,17 +25,6 @@ fun LockScreen(viewModel: LockViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-//            .paint(
-//                painter = (if (wallpaper != null) BitmapPainter(wallpaper) else BitmapPainter(
-//                    Bitmap
-//                        .createBitmap(
-//                            context.resources.displayMetrics.widthPixels,
-//                            context.resources.displayMetrics.heightPixels,
-//                            Bitmap.Config.ARGB_8888
-//                        )
-//                        .asImageBitmap()
-//                ))
-//            )
     ) {
         if (wallpaper != null) {
             Image(

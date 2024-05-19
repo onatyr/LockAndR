@@ -9,8 +9,8 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
-    <uses-permission android:name="android.permission.READ_WALLPAPER_INTERNAL" />
+    <uses-permission android:name="android.permission.READ_WALLPAPER_INTERNAL"
+        tools:ignore="ProtectedPermissions" />
 
     <application
 

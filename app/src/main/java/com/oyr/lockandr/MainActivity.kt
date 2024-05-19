@@ -1,6 +1,5 @@
 package com.oyr.lockandr
 
-import android.app.KeyguardManager
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
@@ -47,10 +46,6 @@ class MainActivity : ComponentActivity(), AdminActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        devicePolicyManager.setLockTaskPackages(
-            adminComponentName,
-            arrayOf("com.oyr.lockandr")
-        )
         val devAdminManager = DevAdminManager(devicePolicyManager, adminComponentName, this)
         packagesViewModel = PackagesViewModel(devAdminManager)
 
@@ -71,10 +66,6 @@ class MainActivity : ComponentActivity(), AdminActivity {
                 PackagesScreen(packagesViewModel)
             }
         }
-    }
-
-    override fun startActivityForResult(intent: Intent, requestCode: Int) {
-        super.startActivityForResult(intent, requestCode)
     }
 
     override fun getPackageManager(): PackageManager = super.getPackageManager()
@@ -101,14 +92,16 @@ class MainActivity : ComponentActivity(), AdminActivity {
     override fun onStart() {
         super.onStart()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE)
-        } else {
-            startLockTask()
+                PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
+            )
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>, grantResults: IntArray

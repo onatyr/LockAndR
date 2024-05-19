@@ -9,7 +9,6 @@ import com.oyr.lockandr.LockActivity
 
 class ScreenStateReceiver : BroadcastReceiver() {
 
-
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             Intent.ACTION_SCREEN_OFF -> {
