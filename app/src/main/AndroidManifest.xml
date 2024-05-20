@@ -3,13 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.READ_WALLPAPER_INTERNAL"
+    <uses-permission
+        android:name="android.permission.READ_WALLPAPER_INTERNAL"
         tools:ignore="ProtectedPermissions" />
 
     <application
@@ -39,7 +42,7 @@
 
         <service
             android:name=".services.ScreenStateService"
-            android:foregroundServiceType=""/>
+            android:foregroundServiceType="" />
 
         <receiver
             android:name=".receivers.DevAdminReceiver"
@@ -57,5 +60,20 @@
                 android:name="android.app.locktask_component"
                 android:value=".LockActivity" />
         </receiver>
+
+        <service
+            android:name=".services.AccessibilityControlService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService"/>
+                <action android:name="android.intent.action.CONFIGURATION_CHANGED"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service"/>
+        </service>
+
     </application>
 </manifest>
