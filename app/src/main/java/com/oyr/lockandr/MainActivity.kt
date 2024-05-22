@@ -20,6 +20,9 @@ import com.oyr.lockandr.receivers.DevAdminReceiver
 import com.oyr.lockandr.services.ScreenStateService
 import com.oyr.lockandr.ui.theme.LockAndRTheme
 import android.Manifest
+import android.net.Uri
+import android.provider.Settings
+import android.util.Log
 
 
 interface AdminActivity {
@@ -32,6 +35,7 @@ interface AdminActivity {
 class MainActivity : ComponentActivity(), AdminActivity {
 
     private val PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1
+    private val OVERLAY_PERMISSION_REQ_CODE = 2
 
 
     private val adminComponentName: ComponentName by lazy {
@@ -55,7 +59,11 @@ class MainActivity : ComponentActivity(), AdminActivity {
         } else {
             startService(serviceIntent)
         }
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            val intent =
+                Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+            startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE)
+        }
 
 //        var isAdminActive = false
 //        isAdminActive = devAdminManager.isAdminActive()
@@ -110,7 +118,7 @@ class MainActivity : ComponentActivity(), AdminActivity {
         when (requestCode) {
             PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    startLockTask()
+
                 }
                 return
             }

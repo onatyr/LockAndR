@@ -15,12 +15,12 @@ class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
         lockAdmin.unlock()
     }
 
-    fun getDeviceWallpaper(context: Context): ImageBitmap? {
-        val wallpaperManager = WallpaperManager.getInstance(context)
-        val drawable = wallpaperManager.drawable
-        if (drawable != null) {
-            return drawable.toBitmap().asImageBitmap()
-        }
-        return null
-    }
+//    fun getDeviceWallpaper(context: Context): ImageBitmap? {
+//        val wallpaperManager = WallpaperManager.getInstance(context)
+//        val drawable = wallpaperManager.drawable
+//        if (drawable != null) {
+//            return drawable.toBitmap().asImageBitmap()
+//        }
+//        return null
+//    }
 }

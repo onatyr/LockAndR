@@ -5,8 +5,11 @@ import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -14,6 +17,7 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.ComposeView
 import com.oyr.lockandr.lockscreen.LockAdmin
 import com.oyr.lockandr.lockscreen.LockScreen
 import com.oyr.lockandr.lockscreen.LockViewModel
@@ -30,27 +34,31 @@ class LockActivity : ComponentActivity(), LockAdmin {
         }
     }
 
-    private val adminComponentName: ComponentName by lazy {
-        ComponentName(this, DevAdminReceiver::class.java)
-    }
-
-    private val devicePolicyManager: DevicePolicyManager by lazy {
-        getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-    }
-
     private val lockViewModel = LockViewModel(this)
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true)
+        val display = getSystemService(WINDOW_SERVICE) as WindowManager
+        val appOverlay: View = LayoutInflater.from(this).inflate(R.layout.app_overlay, null, false)
+        val appOverlayLayoutParams = WindowManager.LayoutParams()
+        appOverlayLayoutParams.type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY;
+        appOverlayLayoutParams.format = PixelFormat.TRANSLUCENT;
+        appOverlayLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        appOverlayLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        appOverlayLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        val composeView = appOverlay.findViewById<ComposeView>(R.id.compose_view)
+        composeView.setContent {
+            LockScreen(viewModel = lockViewModel)
         }
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
-        setContent {
-        LockScreen(lockViewModel)
-        }
+//        val viewModelStore = ViewModelStore()
+//        val lifecycleOwner = MyLifecycleOwner()
+//        lifecycleOwner.performRestore(null)
+//        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+//        composeView.setViewTreeLifecycleOwner(lifecycleOwner)
+//        composeView.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
+//        composeView.setViewTreeViewModelStoreOwner(viewModelStore)
+        display.addView(appOverlay, appOverlayLayoutParams)
 
     }
 
