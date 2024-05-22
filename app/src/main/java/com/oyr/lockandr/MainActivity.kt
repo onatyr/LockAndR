@@ -5,24 +5,21 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.annotation.RequiresApi
 import com.oyr.lockandr.DevAdminManager.Companion.RESULT_ENABLE
 import com.oyr.lockandr.packagesscreen.PackagesScreen
 import com.oyr.lockandr.packagesscreen.PackagesViewModel
 import com.oyr.lockandr.receivers.DevAdminReceiver
-import com.oyr.lockandr.services.ScreenStateService
 import com.oyr.lockandr.ui.theme.LockAndRTheme
-import android.Manifest
-import android.net.Uri
-import android.provider.Settings
-import android.util.Log
 
 
 interface AdminActivity {
@@ -36,6 +33,7 @@ class MainActivity : ComponentActivity(), AdminActivity {
 
     private val PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1
     private val OVERLAY_PERMISSION_REQ_CODE = 2
+    private val PERMISSIONS_REQUEST_MANAGE_EXTERNAL_STORAGE = 3
 
 
     private val adminComponentName: ComponentName by lazy {
@@ -53,12 +51,7 @@ class MainActivity : ComponentActivity(), AdminActivity {
         val devAdminManager = DevAdminManager(devicePolicyManager, adminComponentName, this)
         packagesViewModel = PackagesViewModel(devAdminManager)
 
-        val serviceIntent = Intent(this, ScreenStateService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent)
-        } else {
-            startService(serviceIntent)
-        }
+//
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             val intent =
                 Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
@@ -97,17 +90,17 @@ class MainActivity : ComponentActivity(), AdminActivity {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onStart() {
         super.onStart()
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
-            )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+            !Environment.isExternalStorageManager()) {
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            val uri = Uri.fromParts("package", packageName, null)
+            intent.data = uri
+            startActivityForResult(intent, PERMISSIONS_REQUEST_MANAGE_EXTERNAL_STORAGE)
         }
+
     }
 
     override fun onRequestPermissionsResult(
@@ -118,13 +111,16 @@ class MainActivity : ComponentActivity(), AdminActivity {
         when (requestCode) {
             PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Toast.makeText(this, "Permission granted to read your External storage", Toast.LENGTH_SHORT).show()
 
+                }
+                else {
+                    Toast.makeText(this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show()
                 }
                 return
             }
 
             else -> {
-                // Ignore all other requests.
             }
         }
     }

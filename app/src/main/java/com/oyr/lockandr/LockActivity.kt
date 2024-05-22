@@ -67,6 +67,10 @@ class LockActivity : ComponentActivity(), LockAdmin {
         onBackPressedDispatcher.addCallback(onBackPressedCallback)
     }
 
+    override fun lock() {
+        TODO("Not yet implemented")
+    }
+
     override fun unlock() {
         finish()
     }

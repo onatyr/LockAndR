@@ -5,16 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.oyr.lockandr.LockActivity
+import com.oyr.lockandr.lockscreen.LockAdmin
 
 
-class ScreenStateReceiver : BroadcastReceiver() {
+class ScreenStateReceiver(val lockAdmin: LockAdmin) : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             Intent.ACTION_SCREEN_OFF -> {
-//                val lockIntent = Intent(context, LockActivity::class.java)
-//                lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-//                context.startActivity(lockIntent)
+                lockAdmin.lock()
                 Log.d("ScreenStateReceiver", "Screen turned off")
             }
 

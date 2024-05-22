@@ -5,8 +5,7 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
@@ -39,12 +38,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LockActivity" />
-
-        <service
-            android:name=".services.ScreenStateService"
-            android:foregroundServiceType="" />
-
         <receiver
             android:name=".receivers.DevAdminReceiver"
             android:exported="true"
@@ -57,9 +50,6 @@
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin" />
-            <meta-data
-                android:name="android.app.locktask_component"
-                android:value=".LockActivity" />
         </receiver>
 
         <service
