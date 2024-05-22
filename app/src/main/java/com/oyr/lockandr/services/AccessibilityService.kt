@@ -27,6 +27,9 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 class AccessibilityControlService : AccessibilityService(), LockAdmin {
 
     val windowManager get() = getSystemService(WINDOW_SERVICE) as WindowManager
+    lateinit var composeView: ComposeView
+    private var isOverlayDisplayed = false
+
     override fun onServiceConnected() {
         super.onServiceConnected()
         Log.e("debugservice", "CONNECTED")
@@ -36,18 +39,16 @@ class AccessibilityControlService : AccessibilityService(), LockAdmin {
     override fun onCreate() {
         super.onCreate()
         Log.e("debugservice", "CREATED")
-        showOverlay()
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        Log.e("debugservice", "EVENT ${event!!.eventType}")
-        if (event!!.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            val eventText = event.text.toString()
-            if (eventText.contains("lock screen")) {
-                Log.e("debugservice", "EVENT")
-                showOverlay()
-            }
+        event ?: return
+        Log.e("debugservice", "EVENT ${event.eventType}")
+        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            Log.e("debugservice", "EVENT")
+            showOverlay()
+            composeView?.tag = "locked"
         }
     }
 
@@ -56,6 +57,7 @@ class AccessibilityControlService : AccessibilityService(), LockAdmin {
     }
 
     fun showOverlay() {
+        if (isOverlayDisplayed) return
         val layoutFlag: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
@@ -69,8 +71,8 @@ class AccessibilityControlService : AccessibilityService(), LockAdmin {
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
-        val composeView = ComposeView(this)
-        composeView.setContent {
+        composeView = ComposeView(this)
+        composeView?.setContent {
             LockScreen(viewModel = LockViewModel(this))
         }
 
@@ -82,16 +84,18 @@ class AccessibilityControlService : AccessibilityService(), LockAdmin {
         val lifecycleOwner = MyLifecycleOwner()
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-        composeView.setViewTreeLifecycleOwner(lifecycleOwner)
-        composeView.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
-        composeView.setViewTreeViewModelStoreOwner(viewModelStoreOwner)
-        windowManager.addView(composeView, params)
-        Log.e("debugservice", "DISPLAYED")
+        composeView?.setViewTreeLifecycleOwner(lifecycleOwner)
+        composeView?.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
+        composeView?.setViewTreeViewModelStoreOwner(viewModelStoreOwner)
+        windowManager.addView(composeView!!, params)
         lifecycleOwner.setCurrentState(Lifecycle.State.CREATED)
+        isOverlayDisplayed = true
     }
 
     override fun unlock() {
-        TODO("Not yet implemented")
+        Log.e("debugservice", "UNLOCKED")
+        windowManager.removeView(composeView)
+        isOverlayDisplayed = false
     }
 
     override fun onDestroy() {

@@ -1,6 +1,7 @@
 package com.oyr.lockandr.lockscreen
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun LockScreen(viewModel: LockViewModel) {
+    Log.e("debuglock", "LOCKSCREEN")
     val context = LocalContext.current
     val text = remember {
         mutableStateOf("UNLOCK")
@@ -43,7 +45,7 @@ fun LockScreen(viewModel: LockViewModel) {
             )
         }
         Button(onClick = {
-//            viewModel.unlock()
+            viewModel.unlock()
             text.value = "LOCKED"
         }, modifier = Modifier
             .fillMaxSize()

@@ -11,12 +11,6 @@ internal class MyLifecycleOwner : SavedStateRegistryOwner {
     private var mLifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
     private var mSavedStateRegistryController: SavedStateRegistryController = SavedStateRegistryController.create(this)
 
-    /**
-     * @return True if the Lifecycle has been initialized.
-     */
-    val isInitialized: Boolean
-        get() = true
-
     override val savedStateRegistry: SavedStateRegistry = mSavedStateRegistryController.savedStateRegistry
     override val lifecycle: Lifecycle get() = mLifecycleRegistry
 
@@ -30,9 +24,5 @@ internal class MyLifecycleOwner : SavedStateRegistryOwner {
 
     fun performRestore(savedState: Bundle?) {
         mSavedStateRegistryController.performRestore(savedState)
-    }
-
-    fun performSave(outBundle: Bundle) {
-        mSavedStateRegistryController.performSave(outBundle)
     }
 }
