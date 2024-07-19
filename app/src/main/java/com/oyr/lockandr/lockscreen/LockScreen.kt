@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,11 +23,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,18 +46,18 @@ fun LockScreen(viewModel: LockViewModel) {
     val wallpaper = viewModel.getDeviceWallpaper(context)
 
     LockBackground(wallpaper) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize())² {
             Icon(
                 imageVector = Icons.Filled.Lock,
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .padding(top = 32.dp)
+                    .padding(top = 40.dp)
                     .aspectRatio(18f),
                 tint = Color.White
             )
-            Box(modifier = Modifier.align(Alignment.TopCenter).padding(top = 100.dp)) {
-                DateTimeComposable()
+            Box(modifier = Modifier.align(Alignment.TopCenter).padding(top = 150.dp)) {
+//                DateTimeComposable()
             }
             Button(
                 onClick = {
@@ -62,14 +65,13 @@ fun LockScreen(viewModel: LockViewModel) {
                 }, modifier = Modifier
                     .width(IntrinsicSize.Min)
                     .height(IntrinsicSize.Min)
-                    .background(Color.Black)
                     .align(Alignment.Center)
             ) {
                 Text(text = "UNLOCK")
             }
             Text(
                 text = "Faites glisser pour déverrouiller",
-                modifier = Modifier.align(Alignment.BottomCenter),
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 35.dp),
                 color = Color.White
             )
         }
@@ -77,8 +79,18 @@ fun LockScreen(viewModel: LockViewModel) {
     }
 }
 
+class CustomContentScale : ContentScale {
+    override fun computeScaleFactor(
+        srcSize: Size,
+        dstSize: Size
+    ): ScaleFactor {
+        return ScaleFactor(1f,2f)
+    }
+}
 @Composable
 fun LockBackground(wallpaper: ImageBitmap?, content: @Composable () -> Unit) {
+    val screenHeight = LocalContext.current.resources.displayMetrics.heightPixels
+    val density = LocalContext.current.resources.displayMetrics.density
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -88,8 +100,8 @@ fun LockBackground(wallpaper: ImageBitmap?, content: @Composable () -> Unit) {
             Image(
                 painter = BitmapPainter(wallpaper),
                 contentDescription = "Background",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillHeight
+                modifier = Modifier.fillMaxHeight(),
+                contentScale = ContentScale.FillWidth
             )
         }
 

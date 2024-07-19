@@ -51,7 +51,6 @@ class MainActivity : ComponentActivity(), AdminActivity {
         val devAdminManager = DevAdminManager(devicePolicyManager, adminComponentName, this)
         packagesViewModel = PackagesViewModel(devAdminManager)
 
-//
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             val intent =
                 Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))

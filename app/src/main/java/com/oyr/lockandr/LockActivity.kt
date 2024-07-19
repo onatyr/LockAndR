@@ -1,10 +1,5 @@
 package com.oyr.lockandr
 
-import android.app.KeyguardManager
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Bundle
@@ -13,15 +8,11 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.ui.platform.ComposeView
 import com.oyr.lockandr.lockscreen.LockAdmin
 import com.oyr.lockandr.lockscreen.LockScreen
 import com.oyr.lockandr.lockscreen.LockViewModel
-import com.oyr.lockandr.receivers.DevAdminReceiver
 
 @Suppress("DEPRECATION")
 class LockActivity : ComponentActivity(), LockAdmin {
@@ -48,6 +39,7 @@ class LockActivity : ComponentActivity(), LockAdmin {
         appOverlayLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         appOverlayLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         val composeView = appOverlay.findViewById<ComposeView>(R.id.compose_view)
+
         composeView.setContent {
             LockScreen(viewModel = lockViewModel)
         }
