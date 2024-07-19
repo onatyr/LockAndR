@@ -22,7 +22,7 @@ class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
 
     fun getDeviceWallpaper(context: Context): ImageBitmap? {
         val wallpaperManager = WallpaperManager.getInstance(context)
-        val drawable = wallpaperManager.drawable
+        val drawable = wallpaperManager.fastDrawable
         if (drawable != null) {
             return drawable.toBitmap().asImageBitmap()
         }

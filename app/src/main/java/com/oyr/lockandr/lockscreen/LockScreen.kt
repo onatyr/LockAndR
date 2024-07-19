@@ -27,13 +27,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.oyr.lockandr.R
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -46,7 +47,7 @@ fun LockScreen(viewModel: LockViewModel) {
     val wallpaper = viewModel.getDeviceWallpaper(context)
 
     LockBackground(wallpaper) {
-        Box(modifier = Modifier.fillMaxSize())² {
+        Box(modifier = Modifier.fillMaxSize()) {
             Icon(
                 imageVector = Icons.Filled.Lock,
                 contentDescription = null,
@@ -56,8 +57,10 @@ fun LockScreen(viewModel: LockViewModel) {
                     .aspectRatio(18f),
                 tint = Color.White
             )
-            Box(modifier = Modifier.align(Alignment.TopCenter).padding(top = 150.dp)) {
-//                DateTimeComposable()
+            Box(modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 150.dp)) {
+                DateTimeComposable()
             }
             Button(
                 onClick = {
@@ -71,7 +74,9 @@ fun LockScreen(viewModel: LockViewModel) {
             }
             Text(
                 text = "Faites glisser pour déverrouiller",
-                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 35.dp),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 35.dp),
                 color = Color.White
             )
         }
@@ -98,10 +103,10 @@ fun LockBackground(wallpaper: ImageBitmap?, content: @Composable () -> Unit) {
     ) {
         if (wallpaper != null) {
             Image(
-                painter = BitmapPainter(wallpaper),
+                painter = painterResource(id = R.drawable.wallpaper),//BitmapPainter(wallpaper),
                 contentDescription = "Background",
                 modifier = Modifier.fillMaxHeight(),
-                contentScale = ContentScale.FillWidth
+                contentScale = ContentScale.Crop
             )
         }
 
@@ -127,14 +132,14 @@ fun DateTimeComposable() {
             }
         }
 
-        Column {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = dateTime.value.split(", ")[1].split(":").dropLast(1).joinToString(":"),
+                text = dateTime.value.split(", ")[0].split(":").drop(0).joinToString(":"),
                 fontSize = 60.sp,
                 color = Color.White
             )
             Text(
-                text = dateTime.value.split(", ")[0],
+                text = dateTime.value.split(", ")[2],
                 fontSize = 25.sp,
                 fontWeight = FontWeight.ExtraLight,
                 color = Color.White
