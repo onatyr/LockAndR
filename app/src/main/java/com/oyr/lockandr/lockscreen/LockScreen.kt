@@ -1,6 +1,7 @@
 package com.oyr.lockandr.lockscreen
 
 import android.os.Build
+import android.view.MotionEvent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,16 +20,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,8 +47,13 @@ import java.time.format.FormatStyle
 fun LockScreen(viewModel: LockViewModel) {
     val context = LocalContext.current
     val wallpaper = viewModel.getDeviceWallpaper(context)
+    val offsetY = viewModel.offsetY.collectAsState()
+    val adaptativeFontSize: Float = 12f * (1f + when(offsetY.value) {
+        in 0f..500f -> offsetY.value / 714.2f
+        else -> { if (offsetY.value <= 0) 0f else 2.5f}
+    })
 
-    LockBackground(wallpaper) {
+    LockBackground(wallpaper, viewModel::initOffsetY, viewModel::updateOffsetY) {
         Box(modifier = Modifier.fillMaxSize()) {
             Icon(
                 imageVector = Icons.Filled.Lock,
@@ -57,9 +64,11 @@ fun LockScreen(viewModel: LockViewModel) {
                     .aspectRatio(18f),
                 tint = Color.White
             )
-            Box(modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 150.dp)) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 150.dp)
+            ) {
                 DateTimeComposable()
             }
             Button(
@@ -74,6 +83,7 @@ fun LockScreen(viewModel: LockViewModel) {
             }
             Text(
                 text = "Faites glisser pour déverrouiller",
+                fontSize = adaptativeFontSize.sp,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 35.dp),
@@ -84,22 +94,30 @@ fun LockScreen(viewModel: LockViewModel) {
     }
 }
 
-class CustomContentScale : ContentScale {
-    override fun computeScaleFactor(
-        srcSize: Size,
-        dstSize: Size
-    ): ScaleFactor {
-        return ScaleFactor(1f,2f)
-    }
-}
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LockBackground(wallpaper: ImageBitmap?, content: @Composable () -> Unit) {
-    val screenHeight = LocalContext.current.resources.displayMetrics.heightPixels
-    val density = LocalContext.current.resources.displayMetrics.density
+fun LockBackground(wallpaper: ImageBitmap?, initOffset: (Float) -> Unit, updateOffset: (Float) -> Unit, content: @Composable () -> Unit) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black, shape = RectangleShape)
+            .pointerInteropFilter {
+                when(it.action) {
+                    MotionEvent.ACTION_DOWN -> initOffset(it.y)
+                    MotionEvent.ACTION_MOVE -> updateOffset(it.y)
+                    MotionEvent.ACTION_UP -> initOffset(0f)
+                }
+                true
+            }
+//            .draggable(
+//                orientation = Orientation.Vertical,
+//                state = rememberDraggableState { delta ->
+//                    updateOffset(delta)
+//                },
+//                onDragStopped = { updateOffset(0f) },
+//                reverseDirection = true
+//            )
     ) {
         if (wallpaper != null) {
             Image(
