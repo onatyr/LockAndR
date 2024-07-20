@@ -1,6 +1,8 @@
 package com.oyr.lockandr.lockscreen
 
+import android.content.Context
 import android.os.Build
+import android.os.Vibrator
 import android.view.MotionEvent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -23,11 +25,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -249,21 +255,24 @@ fun DigitKeyboard(
 
 @Composable
 fun KeyboardButton(onButtonClick: () -> Unit, buttonContent: @Composable () -> Unit) {
-    Button(
-        modifier = Modifier.size(70.dp),
-        shape = CircleShape,
-        border = BorderStroke(0.5.dp, Color.Gray),
-        colors = ButtonColors(
-            containerColor = Color.Transparent,
-            contentColor = Color.White,
-            disabledContentColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent
-        ),
-        onClick = {
-            onButtonClick()
-            /* TODO VIBRATE */
-        }) {
-        buttonContent()
+    val vibrator = LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    CompositionLocalProvider(LocalRippleTheme provides MyRippleTheme()) {
+        Button(
+            modifier = Modifier.size(70.dp),
+            shape = CircleShape,
+            border = BorderStroke(0.5.dp, Color.Gray),
+            colors = ButtonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.White,
+                disabledContentColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent
+            ),
+            onClick = {
+                vibrator.vibrate(60)
+                onButtonClick()
+            }) {
+            buttonContent()
+        }
     }
 }
 
@@ -316,4 +325,16 @@ fun ValidateButton(onButtonClick: () -> Unit) {
             )
         }
     }
+}
+
+class MyRippleTheme : RippleTheme {
+
+    @Composable
+    override fun defaultColor() = Color.White
+
+    @Composable
+    override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
+        Color.White,
+        lightTheme = true
+    )
 }
