@@ -63,12 +63,12 @@ class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
 
     fun updateInputCode(inputKey: String) {
         inputCode += inputKey
-        _blurredCode.update { inputCode.map { '*' }.joinToString("") }
+        _blurredCode.update { inputCode.map { '•' }.joinToString("") }
     }
 
     fun deleteLast() {
         inputCode = inputCode.dropLast(1)
-        _blurredCode.update { inputCode.map { '*' }.joinToString("") }
+        _blurredCode.update { inputCode.map { '•' }.joinToString("") }
     }
 
     // TODO Wallpaper is hard to work with (scale, crop ratio), better implement a feature where the user can add his own wallpaper
