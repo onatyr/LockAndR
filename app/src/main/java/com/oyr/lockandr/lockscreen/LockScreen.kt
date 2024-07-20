@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,13 +16,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -186,19 +189,27 @@ fun CodeScreen(displayedScreen: DisplayedScreen, viewModel: LockViewModel) {
         visible = displayedScreen == DisplayedScreen.CODE_SCREEN,
         enter = fadeIn()
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Text(
-                text = blurredCode.value,
-                modifier = Modifier.align(Alignment.TopCenter),
-                fontSize = 20.sp,
-                color = Color.White
-            )
-            DigitKeyboard(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+        ) {
+            Column(
                 modifier = Modifier.align(Alignment.Center),
-                onDigitClick = viewModel::updateInputCode,
-                onBackClick = viewModel::deleteLast,
-                onValidateClick = viewModel::validateCode
-            )
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = blurredCode.value,
+                    fontSize = 20.sp,
+                    color = Color.White
+                )
+                DigitKeyboard(
+                    modifier = Modifier,
+                    onDigitClick = viewModel::updateInputCode,
+                    onBackClick = viewModel::deleteLast,
+                    onValidateClick = viewModel::validateCode
+                )
+            }
         }
     }
 }
@@ -210,7 +221,7 @@ fun DigitKeyboard(
     onBackClick: () -> Unit,
     onValidateClick: () -> Unit
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         val keys = listOf(
             "1", "2", "3",
             "4", "5", "6",
@@ -221,9 +232,8 @@ fun DigitKeyboard(
         keys.chunked(3).forEach { rowKeys ->
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    .padding(vertical = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(40.dp)
             ) {
                 rowKeys.forEach { key ->
                     when (key) {
@@ -238,22 +248,72 @@ fun DigitKeyboard(
 }
 
 @Composable
+fun KeyboardButton(onButtonClick: () -> Unit, buttonContent: @Composable () -> Unit) {
+    Button(
+        modifier = Modifier.size(70.dp),
+        shape = CircleShape,
+        border = BorderStroke(0.5.dp, Color.Gray),
+        colors = ButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = Color.White,
+            disabledContentColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent
+        ),
+        onClick = {
+            onButtonClick()
+            /* TODO VIBRATE */
+        }) {
+        buttonContent()
+    }
+}
+
+@Composable
 fun DigitButton(value: String, onButtonClick: (String) -> Unit) {
-    Button(onClick = { onButtonClick(value) }) {
-        Text(text = value)
+    KeyboardButton(
+        onButtonClick = { onButtonClick(value) }
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Text(text = value)
+        }
     }
 }
 
 @Composable
 fun BackButton(onButtonClick: () -> Unit) {
-    Button(onClick = { onButtonClick() }) {
-        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "delete last")
+    KeyboardButton(
+        onButtonClick = { onButtonClick() }
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "delete last"
+            )
+        }
     }
 }
 
 @Composable
 fun ValidateButton(onButtonClick: () -> Unit) {
-    Button(onClick = { onButtonClick() }) {
-        Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "validate input")
+    KeyboardButton(
+        onButtonClick = { onButtonClick() }
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Send,
+                contentDescription = "validate input"
+            )
+        }
     }
 }
