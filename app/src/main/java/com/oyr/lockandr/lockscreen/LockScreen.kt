@@ -39,8 +39,6 @@ import androidx.compose.ui.unit.sp
 import com.oyr.lockandr.R
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 
 @Composable
@@ -138,7 +136,6 @@ fun DateTimeComposable() {
         val dateTime = remember {
             mutableStateOf(
                 LocalDateTime.now()
-                    .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
             )
         }
 
@@ -146,18 +143,17 @@ fun DateTimeComposable() {
             while (true) {
                 delay(1000L) // delay for 1 second
                 dateTime.value = LocalDateTime.now()
-                    .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
             }
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = dateTime.value.split(", ")[0].split(":").drop(0).joinToString(":"),
+                text = "${dateTime.value.hour}:${dateTime.value.minute}",
                 fontSize = 60.sp,
                 color = Color.White
             )
             Text(
-                text = dateTime.value.split(", ")[2],
+                text = "${dateTime.value.dayOfWeek} ${dateTime.value.dayOfMonth} ${dateTime.value.month}",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.ExtraLight,
                 color = Color.White

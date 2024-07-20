@@ -28,13 +28,16 @@ class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
 
     fun initOffsetY(startCoordinate: Float) {
         this.startCoordinate = startCoordinate
-        updateOffsetY(0f)
+        updateOffsetY(startCoordinate)
     }
 
     fun updateOffsetY(actualCoordinate: Float) {
         val newOffset = -(actualCoordinate - startCoordinate)
         if (newOffset in (0f..500f))
             _offsetY.value = newOffset
+        else if (newOffset > 500f) {
+//            unlock()
+        }
     }
 
     fun getDeviceWallpaper(context: Context): ImageBitmap? {
