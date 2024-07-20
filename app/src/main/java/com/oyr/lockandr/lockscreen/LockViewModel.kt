@@ -8,6 +8,12 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+
+enum class DisplayedScreen {
+    SAVE_SCREEN,
+    CODE_SCREEN
+}
 
 interface LockAdmin {
     fun lock()
@@ -15,14 +21,23 @@ interface LockAdmin {
 }
 class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
 
+    private val realCode = "1234"
+    private var inputCode = ""
+
+    private val _blurredCode = MutableStateFlow("")
+    val blurredCode = _blurredCode.asStateFlow()
+
     private var startCoordinate = 0f
     private val _offsetY = MutableStateFlow(0f)
     val offsetY = _offsetY.asStateFlow()
 
-    fun lock() {
+    private val _displayedScreen = MutableStateFlow(DisplayedScreen.SAVE_SCREEN)
+    val displayedBox = _displayedScreen.asStateFlow()
+
+    private fun lock() {
         lockAdmin.lock()
     }
-    fun unlock() {
+    private fun unlock() {
         lockAdmin.unlock()
     }
 
@@ -34,10 +49,26 @@ class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
     fun updateOffsetY(actualCoordinate: Float) {
         val newOffset = -(actualCoordinate - startCoordinate)
         if (newOffset in (0f..500f))
-            _offsetY.value = newOffset
+            _offsetY.update { newOffset }
         else if (newOffset > 600f) {
-            unlock()
+            updateDisplayedScreen(DisplayedScreen.CODE_SCREEN)
         }
+    }
+
+    private fun updateDisplayedScreen(screen: DisplayedScreen) = _displayedScreen.update { screen }
+
+    fun validateCode() {
+        if (inputCode == realCode) unlock()
+    }
+
+    fun updateInputCode(inputKey: String) {
+        inputCode += inputKey
+        _blurredCode.update { inputCode.map { '*' }.joinToString("") }
+    }
+
+    fun deleteLast() {
+        inputCode = inputCode.dropLast(1)
+        _blurredCode.update { inputCode.map { '*' }.joinToString("") }
     }
 
     // TODO Wallpaper is hard to work with (scale, crop ratio), better implement a feature where the user can add his own wallpaper

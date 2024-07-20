@@ -2,17 +2,26 @@ package com.oyr.lockandr.lockscreen
 
 import android.os.Build
 import android.view.MotionEvent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oyr.lockandr.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
 
 
@@ -45,47 +55,11 @@ fun LockScreen(viewModel: LockViewModel) {
     val context = LocalContext.current
     val wallpaper =
         viewModel.getDeviceWallpaper(context)!!
-    val offsetY = viewModel.offsetY.collectAsState()
-    val adaptativeFontRatio = 1f + when (offsetY.value) {
-        in 0f..500f -> offsetY.value / 714.2f
-        else -> {
-            if (offsetY.value <= 0) 0f else 2.5f
-        }
-    }
-
-    val animatedColor by animateColorAsState(
-        targetValue = lerp(Color.White, Color.Transparent, offsetY.value / 600f), label = ""
-    )
+    val displayedScreen = viewModel.displayedBox.collectAsState()
 
     LockBackground(wallpaper, viewModel::initOffsetY, viewModel::updateOffsetY) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Icon(
-                imageVector = Icons.Filled.Lock,
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 40.dp)
-                    .aspectRatio(18f),
-                tint = animatedColor
-            )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 150.dp)
-            ) {
-                DateTimeComposable(animatedColor)
-            }
-
-            Text(
-                text = "Faites glisser pour déverrouiller",
-                fontSize = (13f * adaptativeFontRatio).sp,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 35.dp),
-                color = animatedColor
-            )
-        }
-
+        SaveScreen(displayedScreen = displayedScreen.value, offsetYStateFlow = viewModel.offsetY)
+        CodeScreen(displayedScreen = displayedScreen.value, viewModel)
     }
 }
 
@@ -154,5 +128,132 @@ fun DateTimeComposable(textColor: Color) {
             )
         }
 
+    }
+}
+
+@Composable
+fun SaveScreen(displayedScreen: DisplayedScreen, offsetYStateFlow: StateFlow<Float>) {
+    val offsetY = offsetYStateFlow.collectAsState()
+    val adaptativeFontRatio = 1f + when (offsetY.value) {
+        in 0f..500f -> offsetY.value / 714.2f
+        else -> {
+            if (offsetY.value <= 0) 0f else 2.5f
+        }
+    }
+
+    val animatedColor by animateColorAsState(
+        targetValue = lerp(Color.White, Color.Transparent, offsetY.value / 600f), label = ""
+    )
+
+    AnimatedVisibility(
+        visible = displayedScreen == DisplayedScreen.SAVE_SCREEN,
+        exit = fadeOut()
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Icon(
+                imageVector = Icons.Filled.Lock,
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 40.dp)
+                    .aspectRatio(18f),
+                tint = animatedColor
+            )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 150.dp)
+            ) {
+                DateTimeComposable(animatedColor)
+            }
+
+            Text(
+                text = "Faites glisser pour déverrouiller",
+                fontSize = (13f * adaptativeFontRatio).sp,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 35.dp),
+                color = animatedColor
+            )
+        }
+    }
+}
+
+@Composable
+fun CodeScreen(displayedScreen: DisplayedScreen, viewModel: LockViewModel) {
+    val blurredCode = viewModel.blurredCode.collectAsState()
+    AnimatedVisibility(
+        visible = displayedScreen == DisplayedScreen.CODE_SCREEN,
+        enter = fadeIn()
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = blurredCode.value,
+                modifier = Modifier.align(Alignment.TopCenter),
+                fontSize = 20.sp,
+                color = Color.White
+            )
+            DigitKeyboard(
+                modifier = Modifier.align(Alignment.Center),
+                onDigitClick = viewModel::updateInputCode,
+                onBackClick = viewModel::deleteLast,
+                onValidateClick = viewModel::validateCode
+            )
+        }
+    }
+}
+
+@Composable
+fun DigitKeyboard(
+    modifier: Modifier,
+    onDigitClick: (String) -> Unit,
+    onBackClick: () -> Unit,
+    onValidateClick: () -> Unit
+) {
+    Column(modifier = modifier) {
+        val keys = listOf(
+            "1", "2", "3",
+            "4", "5", "6",
+            "7", "8", "9",
+            "back", "0", "validate"
+        )
+
+        keys.chunked(3).forEach { rowKeys ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                rowKeys.forEach { key ->
+                    when (key) {
+                        "back" -> BackButton(onBackClick)
+                        "validate" -> ValidateButton(onValidateClick)
+                        else -> DigitButton(key, onDigitClick)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DigitButton(value: String, onButtonClick: (String) -> Unit) {
+    Button(onClick = { onButtonClick(value) }) {
+        Text(text = value)
+    }
+}
+
+@Composable
+fun BackButton(onButtonClick: () -> Unit) {
+    Button(onClick = { onButtonClick() }) {
+        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "delete last")
+    }
+}
+
+@Composable
+fun ValidateButton(onButtonClick: () -> Unit) {
+    Button(onClick = { onButtonClick() }) {
+        Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "validate input")
     }
 }
