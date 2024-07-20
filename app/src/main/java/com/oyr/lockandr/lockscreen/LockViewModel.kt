@@ -35,11 +35,12 @@ class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
         val newOffset = -(actualCoordinate - startCoordinate)
         if (newOffset in (0f..500f))
             _offsetY.value = newOffset
-        else if (newOffset > 500f) {
-//            unlock()
+        else if (newOffset > 600f) {
+            unlock()
         }
     }
 
+    // TODO Wallpaper is hard to work with (scale, crop ratio), better implement a feature where the user can add his own wallpaper
     fun getDeviceWallpaper(context: Context): ImageBitmap? {
         val wallpaperManager = WallpaperManager.getInstance(context)
         val drawable = wallpaperManager.fastDrawable
