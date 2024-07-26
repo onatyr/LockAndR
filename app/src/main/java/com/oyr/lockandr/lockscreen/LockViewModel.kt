@@ -55,7 +55,7 @@ class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
         }
     }
 
-    private fun updateDisplayedScreen(screen: DisplayedScreen) = _displayedScreen.update { screen }
+    fun updateDisplayedScreen(screen: DisplayedScreen) = _displayedScreen.update { screen }
 
     fun validateCode() {
         if (inputCode == realCode) unlock()

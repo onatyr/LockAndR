@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.oyr.lockandr.lockscreen.DisplayedScreen
 import com.oyr.lockandr.lockscreen.LockAdmin
 import com.oyr.lockandr.lockscreen.LockScreen
 import com.oyr.lockandr.lockscreen.LockViewModel
@@ -26,6 +27,8 @@ class AccessibilityControlService : AccessibilityService(), LockAdmin {
 
     val windowManager get() = getSystemService(WINDOW_SERVICE) as WindowManager
     private lateinit var composeView: ComposeView
+    private val lockViewModel = LockViewModel(this)
+
     private var isOverlayDisplayed = false
 
     private val screenStateReceiver = ScreenStateReceiver(this)
@@ -46,7 +49,7 @@ class AccessibilityControlService : AccessibilityService(), LockAdmin {
 
         composeView = ComposeView(this)
         composeView.setContent {
-            LockScreen(viewModel = LockViewModel(this))
+            LockScreen(viewModel = lockViewModel)
         }
 
         val viewModelStore = ViewModelStore()
@@ -123,6 +126,7 @@ class AccessibilityControlService : AccessibilityService(), LockAdmin {
 
     override fun lock() {
         showOverlay()
+        lockViewModel.updateDisplayedScreen(DisplayedScreen.SAVE_SCREEN)
     }
 
     override fun unlock() {

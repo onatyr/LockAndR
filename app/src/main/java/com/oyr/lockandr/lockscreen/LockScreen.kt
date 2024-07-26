@@ -1,6 +1,8 @@
 package com.oyr.lockandr.lockscreen
 
+import android.os.Build
 import android.view.MotionEvent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

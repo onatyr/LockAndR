@@ -1,7 +1,10 @@
 package com.oyr.lockandr.lockscreen
 
 import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
 import android.os.Vibrator
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,6 +68,8 @@ fun DigitKeyboard(
 @Composable
 fun KeyboardButton(onButtonClick: () -> Unit, buttonContent: @Composable () -> Unit) {
     val vibrator = LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    val effect = VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
+
     CompositionLocalProvider(LocalRippleTheme provides MyRippleTheme()) {
         Button(
             modifier = Modifier.size(70.dp),
@@ -77,7 +82,7 @@ fun KeyboardButton(onButtonClick: () -> Unit, buttonContent: @Composable () -> U
                 disabledContainerColor = Color.Transparent
             ),
             onClick = {
-                vibrator.vibrate(60)
+                vibrator.vibrate(effect)
                 onButtonClick()
             }) {
             buttonContent()
