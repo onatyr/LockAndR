@@ -19,13 +19,13 @@ interface LockAdmin {
     fun lock()
     fun unlock()
 }
-class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
+
+class LockViewModel(private val lockAdmin: LockAdmin) : ViewModel() {
 
     private val realCode = "1234"
-    private var inputCode = ""
 
-    private val _blurredCode = MutableStateFlow("")
-    val blurredCode = _blurredCode.asStateFlow()
+    private val _inputCode = MutableStateFlow("")
+    val inputCode = _inputCode.asStateFlow()
 
     private var startCoordinate = 0f
     private val _offsetY = MutableStateFlow(0f)
@@ -37,6 +37,7 @@ class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
     private fun lock() {
         lockAdmin.lock()
     }
+
     private fun unlock() {
         lockAdmin.unlock()
     }
@@ -55,21 +56,19 @@ class LockViewModel(private val lockAdmin: LockAdmin): ViewModel() {
         }
     }
 
-    fun updateDisplayedScreen(screen: DisplayedScreen) = _displayedScreen.update { screen }
+    fun updateDisplayedScreen(screen: DisplayedScreen) {
+        _inputCode.update { "" }
+        _displayedScreen.update { screen }
+    }
 
     fun validateCode() {
-        if (inputCode == realCode) unlock()
+        if (_inputCode.value == realCode) unlock()
     }
 
-    fun updateInputCode(inputKey: String) {
-        inputCode += inputKey
-        _blurredCode.update { inputCode.map { '•' }.joinToString("") }
-    }
+    fun updateInputCode(inputKey: String) =
+        if (_inputCode.value.length < 6) _inputCode.update { it + inputKey } else {}
 
-    fun deleteLast() {
-        inputCode = inputCode.dropLast(1)
-        _blurredCode.update { inputCode.map { '•' }.joinToString("") }
-    }
+    fun deleteLast() = _inputCode.update { it.dropLast(1) }
 
     // TODO Wallpaper is hard to work with (scale, crop ratio), better implement a feature where the user can add his own wallpaper
     fun getDeviceWallpaper(context: Context): ImageBitmap? {

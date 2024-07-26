@@ -1,7 +1,5 @@
 package com.oyr.lockandr.lockscreen
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
@@ -21,7 +19,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CodeScreen(displayedScreen: DisplayedScreen, viewModel: LockViewModel) {
-    val blurredCode = viewModel.blurredCode.collectAsState()
+    val inputCode = viewModel.inputCode.collectAsState()
     AnimatedVisibility(
         visible = displayedScreen == DisplayedScreen.CODE_SCREEN,
         enter = fadeIn()
@@ -37,7 +35,7 @@ fun CodeScreen(displayedScreen: DisplayedScreen, viewModel: LockViewModel) {
             ) {
                 Spacer(modifier = Modifier.size(200.dp))
                 Text(
-                    text = blurredCode.value,
+                    text = inputCode.value.map { '•' }.joinToString(""),
                     letterSpacing = 10.sp,
                     fontSize = 60.sp,
                     color = Color.White

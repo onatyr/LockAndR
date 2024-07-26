@@ -25,7 +25,7 @@ import com.oyr.lockandr.receivers.ScreenStateReceiver
 
 class AccessibilityControlService : AccessibilityService(), LockAdmin {
 
-    val windowManager get() = getSystemService(WINDOW_SERVICE) as WindowManager
+    private val windowManager get() = getSystemService(WINDOW_SERVICE) as WindowManager
     private lateinit var composeView: ComposeView
     private val lockViewModel = LockViewModel(this)
 
