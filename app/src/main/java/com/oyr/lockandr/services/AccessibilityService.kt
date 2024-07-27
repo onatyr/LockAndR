@@ -47,6 +47,8 @@ class AccessibilityControlService : AccessibilityService(), LockAdmin {
     fun showOverlay() {
         if (isOverlayDisplayed) return
 
+        this
+
         composeView = ComposeView(this)
         composeView.setContent {
             LockScreen(viewModel = lockViewModel)
