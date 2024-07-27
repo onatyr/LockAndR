@@ -16,19 +16,27 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.oyr.lockandr.data.AppDatabase
 import com.oyr.lockandr.lockscreen.DisplayedScreen
 import com.oyr.lockandr.lockscreen.LockAdmin
 import com.oyr.lockandr.lockscreen.LockScreen
 import com.oyr.lockandr.lockscreen.LockViewModel
 import com.oyr.lockandr.receivers.ScreenStateReceiver
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
-class AccessibilityControlService : AccessibilityService(), LockAdmin {
+@AndroidEntryPoint
+class LockService: AccessibilityService() , LockAdmin {
 
     private val windowManager get() = getSystemService(WINDOW_SERVICE) as WindowManager
     private lateinit var composeView: ComposeView
-    private val lockViewModel = LockViewModel(this)
 
+    @Inject
+    lateinit var database: AppDatabase
+
+    private val lockViewModel: LockViewModel by lazy {
+        LockViewModel(this, database)
+    }
     private var isOverlayDisplayed = false
 
     private val screenStateReceiver = ScreenStateReceiver(this)

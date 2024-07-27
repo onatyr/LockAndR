@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
+import com.oyr.lockandr.data.AppDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,8 +20,7 @@ interface LockAdmin {
     fun lock()
     fun unlock()
 }
-
-class LockViewModel(private val lockAdmin: LockAdmin) : ViewModel() {
+class LockViewModel(private val lockAdmin: LockAdmin, private val database: AppDatabase) : ViewModel() {
 
     private val realCode = "1234"
 
