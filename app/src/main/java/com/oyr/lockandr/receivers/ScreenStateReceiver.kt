@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 //import com.oyr.lockandr.LockActivity
-import com.oyr.lockandr.lockscreen.LockAdmin
+import com.oyr.lockandr.presentation.lock.LockAdmin
 
 
 class ScreenStateReceiver(val lockAdmin: LockAdmin) : BroadcastReceiver() {

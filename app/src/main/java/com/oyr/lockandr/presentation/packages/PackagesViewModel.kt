@@ -1,4 +1,4 @@
-package com.oyr.lockandr.packagesscreen
+package com.oyr.lockandr.presentation.packages
 
 import android.graphics.drawable.Drawable
 import androidx.lifecycle.ViewModel

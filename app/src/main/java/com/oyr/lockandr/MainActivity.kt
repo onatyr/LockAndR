@@ -16,8 +16,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import com.oyr.lockandr.DevAdminManager.Companion.RESULT_ENABLE
-import com.oyr.lockandr.packagesscreen.PackagesScreen
-import com.oyr.lockandr.packagesscreen.PackagesViewModel
+import com.oyr.lockandr.presentation.codeprofiles.CodeProfilesScreen
+import com.oyr.lockandr.presentation.codeprofiles.CodeProfilesViewModel
+import com.oyr.lockandr.presentation.packages.PackagesViewModel
 import com.oyr.lockandr.receivers.DevAdminReceiver
 import com.oyr.lockandr.ui.theme.LockAndRTheme
 
@@ -28,7 +29,6 @@ interface AdminActivity {
 }
 
 @Suppress("DEPRECATION")
-
 class MainActivity : ComponentActivity(), AdminActivity {
 
     private val PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1
@@ -63,7 +63,8 @@ class MainActivity : ComponentActivity(), AdminActivity {
         enableEdgeToEdge()
         setContent {
             LockAndRTheme(darkTheme = true) {
-                PackagesScreen(packagesViewModel)
+                CodeProfilesScreen(CodeProfilesViewModel())
+//                PackagesScreen(packagesViewModel)
             }
         }
     }

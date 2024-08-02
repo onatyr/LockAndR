@@ -17,10 +17,10 @@ import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.oyr.lockandr.data.AppDatabase
-import com.oyr.lockandr.lockscreen.DisplayedScreen
-import com.oyr.lockandr.lockscreen.LockAdmin
-import com.oyr.lockandr.lockscreen.LockScreen
-import com.oyr.lockandr.lockscreen.LockViewModel
+import com.oyr.lockandr.presentation.lock.DisplayedScreen
+import com.oyr.lockandr.presentation.lock.LockAdmin
+import com.oyr.lockandr.presentation.lock.LockScreen
+import com.oyr.lockandr.presentation.lock.LockViewModel
 import com.oyr.lockandr.receivers.ScreenStateReceiver
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

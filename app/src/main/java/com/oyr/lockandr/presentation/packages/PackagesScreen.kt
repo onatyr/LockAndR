@@ -1,4 +1,4 @@
-package com.oyr.lockandr.packagesscreen
+package com.oyr.lockandr.presentation.packages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

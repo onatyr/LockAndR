@@ -1,4 +1,4 @@
-package com.oyr.lockandr.lockscreen
+package com.oyr.lockandr.presentation.lock
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

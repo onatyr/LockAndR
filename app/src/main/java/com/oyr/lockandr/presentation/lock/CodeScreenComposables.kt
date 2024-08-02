@@ -1,10 +1,8 @@
-package com.oyr.lockandr.lockscreen
+package com.oyr.lockandr.presentation.lock
 
 import android.content.Context
-import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

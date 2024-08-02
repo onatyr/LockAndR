@@ -1,4 +1,4 @@
-package com.oyr.lockandr.lockscreen
+package com.oyr.lockandr.presentation.lock
 
 import android.app.WallpaperManager
 import android.content.Context
