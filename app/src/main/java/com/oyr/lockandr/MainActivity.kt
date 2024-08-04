@@ -1,8 +1,5 @@
 package com.oyr.lockandr
 
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -14,13 +11,13 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import com.oyr.lockandr.DevAdminManager.Companion.RESULT_ENABLE
-import com.oyr.lockandr.presentation.codeprofiles.CodeProfilesScreen
-import com.oyr.lockandr.presentation.codeprofiles.CodeProfilesViewModel
+import com.oyr.lockandr.presentation.packages.PackagesScreen
 import com.oyr.lockandr.presentation.packages.PackagesViewModel
-import com.oyr.lockandr.receivers.DevAdminReceiver
 import com.oyr.lockandr.ui.theme.LockAndRTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 
 interface AdminActivity {
@@ -29,6 +26,7 @@ interface AdminActivity {
 }
 
 @Suppress("DEPRECATION")
+@AndroidEntryPoint
 class MainActivity : ComponentActivity(), AdminActivity {
 
     private val PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1
@@ -36,20 +34,18 @@ class MainActivity : ComponentActivity(), AdminActivity {
     private val PERMISSIONS_REQUEST_MANAGE_EXTERNAL_STORAGE = 3
 
 
-    private val adminComponentName: ComponentName by lazy {
-        ComponentName(this, DevAdminReceiver::class.java)
-    }
+//    private val adminComponentName: ComponentName by lazy {
+//        ComponentName(this, DevAdminReceiver::class.java)
+//    }
+//
+//    private val devicePolicyManager: DevicePolicyManager by lazy {
+//        getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+//    }
 
-    private val devicePolicyManager: DevicePolicyManager by lazy {
-        getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-    }
+    private val packagesViewModel: PackagesViewModel by viewModels()
 
-    private lateinit var packagesViewModel: PackagesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val devAdminManager = DevAdminManager(devicePolicyManager, adminComponentName, this)
-        packagesViewModel = PackagesViewModel(devAdminManager)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             val intent =
@@ -63,8 +59,8 @@ class MainActivity : ComponentActivity(), AdminActivity {
         enableEdgeToEdge()
         setContent {
             LockAndRTheme(darkTheme = true) {
-                CodeProfilesScreen(CodeProfilesViewModel())
-//                PackagesScreen(packagesViewModel)
+//                CodeProfilesScreen(CodeProfilesViewModel())
+                PackagesScreen(packagesViewModel)
             }
         }
     }
@@ -94,7 +90,8 @@ class MainActivity : ComponentActivity(), AdminActivity {
     override fun onStart() {
         super.onStart()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
-            !Environment.isExternalStorageManager()) {
+            !Environment.isExternalStorageManager()
+        ) {
             val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
             val uri = Uri.fromParts("package", packageName, null)
             intent.data = uri
@@ -111,11 +108,18 @@ class MainActivity : ComponentActivity(), AdminActivity {
         when (requestCode) {
             PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(this, "Permission granted to read your External storage", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Permission granted to read your External storage",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-                }
-                else {
-                    Toast.makeText(this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Permission denied to read your External storage",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 return
             }

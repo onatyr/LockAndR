@@ -26,7 +26,7 @@ fun PackagesScreen(viewModel: PackagesViewModel) {
 
     Column(modifier = Modifier.background(Color.Black).padding(bottom = 50.dp)) {
         Spacer(modifier = Modifier.size(30.dp))
-        Button(onClick = { viewModel.devAdminManager.requireAdminPermissions() }) {}
+        Button(onClick = { viewModel.requireAdminPermissions() }) {}
         Spacer(modifier = Modifier.size(30.dp))
 
         TextField(

@@ -1,16 +1,14 @@
 package com.oyr.lockandr
 
-import android.app.WallpaperManager
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.os.Build
+import javax.inject.Inject
 
-class DevAdminManager(
+class DevAdminManager @Inject constructor(
     private val devicePolicyManager: DevicePolicyManager,
     private val adminComponentName: ComponentName,
     private val adminActivity: AdminActivity

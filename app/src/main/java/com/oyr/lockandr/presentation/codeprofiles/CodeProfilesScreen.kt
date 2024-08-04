@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun CodeProfilesScreen(viewModel: CodeProfilesViewModel) {
-
     Column {
         AddProfileButton()
+
     }
 }

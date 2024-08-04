@@ -9,6 +9,11 @@ import dagger.hilt.android.components.ViewModelComponent
 object ViewModelModule {
 
 //    @Provides
+//    fun providePackagesViewModel(devAdminManager: DevAdminManager): PackagesViewModel {
+//        return PackagesViewModel(devAdminManager)
+//    }
+
+//    @Provides
 //    fun provideLockViewModel(lockService: LockService): LockViewModel {
 //        return LockViewModel(lockService)
 //    }

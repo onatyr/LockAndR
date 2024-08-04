@@ -3,6 +3,7 @@ package com.oyr.lockandr.data.entities
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Entity
+import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
@@ -23,4 +24,12 @@ interface CodeProfileDAO {
         SELECT * FROM code_profile
     """)
     fun getAll(): Flow<CodeProfile>
+
+    @Insert
+    suspend fun insert(codeProfile: CodeProfile)
+
+    @Query("""
+        DELETE FROM code_profile WHERE id = :id
+    """)
+    suspend fun deleteById(id: Int)
 }
